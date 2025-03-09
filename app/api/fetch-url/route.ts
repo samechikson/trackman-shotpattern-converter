@@ -28,9 +28,12 @@ export async function POST(request: NextRequest) {
     const columnNames = parsedUrl.searchParams.getAll("mp[]");
 
     // Use ScrapingBee to fetch the HTML content
-    const client = new scrapingbee.ScrapingBeeClient(
-      "M14514UZ2TBE85ERSTHY1FPSSLKUZTMJ3KJPHAUS5RDU33926RAWVJXVDWGR5HMJCLN8OE3LARCWY3C5"
-    );
+    const apiKey = process.env.SCRAPINGBEE_API_KEY;
+    if (!apiKey) {
+      throw new Error("ScrapingBee API key is not set");
+    }
+
+    const client = new scrapingbee.ScrapingBeeClient(apiKey);
     const response = await client.get({
       url: url,
       params: {
