@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Download, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { CsvPreview } from "./csv-preview";
 
 export function UrlUploader() {
   const [url, setUrl] = useState<string>("");
@@ -40,28 +41,14 @@ export function UrlUploader() {
     setError(null);
 
     try {
-      // Send the URL to the backend for parsing
-      const response = await fetch("/api/fetch-url", {
+      setProgress(40);
+
+      const parseHtmlResponse = await fetch("/api/fetch-url", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ url }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to parse the URL");
-      }
-
-      const { html, columnNames } = await response.json();
-      setProgress(40);
-
-      const parseHtmlResponse = await fetch("/api/parse-file", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ fileContent: html, columnNames }),
       });
       setProgress(60);
 
@@ -70,6 +57,8 @@ export function UrlUploader() {
       }
 
       const { csv, shotCount } = await parseHtmlResponse.json();
+
+      setProgress(80);
 
       setCsvData(csv);
       setShotCount(shotCount);
@@ -152,14 +141,17 @@ export function UrlUploader() {
           )}
 
           {csvData && (
-            <Alert className="bg-green-50 border-green-200">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <AlertTitle className="text-green-800">Success!</AlertTitle>
-              <AlertDescription className="text-green-700">
-                Extracted {shotCount} shots from the TrackMan report. Click the
-                download button below to save the CSV file.
-              </AlertDescription>
-            </Alert>
+            <>
+              <Alert className="bg-green-50 border-green-200">
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <AlertTitle className="text-green-800">Success!</AlertTitle>
+                <AlertDescription className="text-green-700">
+                  Extracted {shotCount} shots from the TrackMan report. Click
+                  the download button below to save the CSV file.
+                </AlertDescription>
+              </Alert>
+              <CsvPreview csvData={csvData} />
+            </>
           )}
         </div>
       </CardContent>

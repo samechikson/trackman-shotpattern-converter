@@ -9,18 +9,18 @@ export default function Home() {
       <div className="w-full max-w-3xl mx-auto">
         <PageHeader />
 
-        <FileUploader />
-        {/* <Tabs defaultValue="file" className="w-full">
+        <Tabs defaultValue="file" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="file">Upload File</TabsTrigger>
             <TabsTrigger value="url">Enter URL</TabsTrigger>
           </TabsList>
           <TabsContent value="file">
+            <FileUploader />
           </TabsContent>
           <TabsContent value="url">
             <UrlUploader />
           </TabsContent>
-        </Tabs> */}
+        </Tabs>
       </div>
     </main>
   );

@@ -1,4 +1,6 @@
+import { parseHtmlToShotPattern } from "@/lib/parser";
 import { type NextRequest, NextResponse } from "next/server";
+const scrapingbee = require("scrapingbee");
 
 export async function POST(request: NextRequest) {
   const { url } = await request.json();
@@ -25,24 +27,31 @@ export async function POST(request: NextRequest) {
     // Extract column names from the URL
     const columnNames = parsedUrl.searchParams.getAll("mp[]");
 
-    // Fetch the HTML content
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    // Use ScrapingBee to fetch the HTML content
+    const client = new scrapingbee.ScrapingBeeClient(
+      "M14514UZ2TBE85ERSTHY1FPSSLKUZTMJ3KJPHAUS5RDU33926RAWVJXVDWGR5HMJCLN8OE3LARCWY3C5"
+    );
+    const response = await client.get({
+      url: url,
+      params: {
+        wait: 10000,
+        wait_for: ".player-name",
       },
     });
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       return NextResponse.json(
         { error: `Failed to fetch URL: ${response.statusText}` },
         { status: response.status }
       );
     }
 
-    const html = await response.text();
+    const decoder = new TextDecoder();
+    const html = decoder.decode(response.data);
 
-    return NextResponse.json({ html, columnNames });
+    const { csv, shotCount } = await parseHtmlToShotPattern(html, columnNames);
+
+    return NextResponse.json({ csv, shotCount });
   } catch (error) {
     console.error("Error fetching URL:", error);
     return NextResponse.json(
