@@ -52,6 +52,16 @@ export async function parseHtmlToShotPattern(
         ".row-with-shot-details:not(.deselected-shot)"
       );
 
+      // Get averages for each club type
+      let totalSum = 0;
+      shotRows.forEach((row) => {
+        const cells = row.querySelectorAll("td");
+        const total =
+          cells[columnIndexes["Total"] ?? 5].textContent?.trim() || "";
+        totalSum += parseInt(total);
+      });
+      const totalAverage = totalSum / shotRows.length;
+
       shotRows.forEach((row) => {
         // Extract the data we need
         const cells = row.querySelectorAll("td");
@@ -66,7 +76,7 @@ export async function parseHtmlToShotPattern(
         shotData.push({
           club: clubType,
           type: clubType === "Dr" ? "Tee" : "Approach", // Default type
-          target: totalDistance, // Using total as target for simplicity
+          target: totalAverage.toString(),
           total: totalDistance,
           side: side,
         });
