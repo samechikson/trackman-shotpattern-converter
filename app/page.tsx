@@ -1,7 +1,5 @@
-import { FileUploader } from "@/components/file-uploader";
 import { UrlUploader } from "@/components/url-uploader";
 import { PageHeader } from "@/components/page-header";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Home() {
   return (
@@ -9,18 +7,7 @@ export default function Home() {
       <div className="w-full max-w-3xl mx-auto">
         <PageHeader />
 
-        <Tabs defaultValue="file" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="file">Upload File</TabsTrigger>
-            <TabsTrigger value="url">Enter URL</TabsTrigger>
-          </TabsList>
-          <TabsContent value="file">
-            <FileUploader />
-          </TabsContent>
-          <TabsContent value="url">
-            <UrlUploader />
-          </TabsContent>
-        </Tabs>
+        <UrlUploader />
       </div>
     </main>
   );
