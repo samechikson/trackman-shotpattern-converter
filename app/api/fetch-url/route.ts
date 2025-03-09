@@ -2,6 +2,8 @@ import { parseHtmlToShotPattern } from "@/lib/parser";
 import { type NextRequest, NextResponse } from "next/server";
 const scrapingbee = require("scrapingbee");
 
+export const maxDuration = 30;
+
 export async function POST(request: NextRequest) {
   const { url } = await request.json();
 
